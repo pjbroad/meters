@@ -11,7 +11,7 @@ def get_config(config_file = os.path.join(os.path.dirname(__file__), "..", "conf
 	if os.path.isfile(config_file):
 		return json.load(open(config_file))
 	else:
-		return { "hostname": "harry", "port": 27017, "username": None, "password": None, "db_name": "meters" }
+		return { "hostname": "localhost", "port": 27017, "username": None, "password": None, "db_name": "meters" }
 
 class db:
 
