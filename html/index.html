@@ -18,13 +18,15 @@
 <body onload="meters.init_page()">
 	<div id="non_graph">
 		<div id="header">
-			<ul id="meters_tabs"></ul>
+			<ul id="meters_tabs">
+			<a class="normal_text" href="/"><li>Home</li></a>
+			</ul>
 			<h3></h3>
 		</div>
 		<div id="controls">
 			<form>
-				Start: <input type="button" id="start_datepicker"  onchange="meter_readings.update_start_date()">
-				End: <input type="button" id="end_datepicker"  onchange="meter_readings.update_end_date()">
+				<input type="button" id="start_datepicker"  onchange="meter_readings.update_start_date()">
+				&nbsp;to&nbsp;<input type="button" id="end_datepicker"  onchange="meter_readings.update_end_date()">
 			</form>
 		</div>
 		<div id="new_tab">
