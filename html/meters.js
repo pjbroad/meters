@@ -22,43 +22,59 @@ var meters = meters ||
 			panel_h.innerHTML = "";
 	},
 
-	get_data: function(url, handler)
+
+	get_post_callback: function(handler)
 	{
-		function callback()
+		if (this.readyState === this.DONE)
 		{
-			if (this.readyState === this.DONE)
+			if (this.status === 200)
 			{
-				if (this.status === 200)
+				if (!this.responseText || this.responseText.length === 0)
 				{
-					if (!this.responseText || this.responseText.length === 0)
-					{
-						meters.display_error_message("Empty response for get_data()");
-						return;
-					}
-					var response = JSON.parse(this.responseText);
-					if (typeof response.status === "undefined")
-						meters.display_error_message("Invalid response for getdata: " + this.responseText);
-					else if (!response.status)
-					{
-						if ((typeof response.message === "undefined") || (response.message.length<=0))
-							meters.display_error_message("Unknown error");
-						else
-							meters.display_error_message(response.message);
-					}
+					meters.display_error_message("Empty response for get_data()");
+					return;
+				}
+				var response = JSON.parse(this.responseText);
+				if (typeof response.status === "undefined")
+					meters.display_error_message("Invalid response for getdata: " + this.responseText);
+				else if (!response.status)
+				{
+					if ((typeof response.message === "undefined") || (response.message.length<=0))
+						meters.display_error_message("Unknown error");
 					else
-						handler(response);
+						meters.display_error_message(response.message);
 				}
 				else
-					meters.display_error_message("Unexpected http status code: " + this.status);
+					handler(response);
 			}
+			else
+				meters.display_error_message("Unexpected http status code: " + this.status);
 		}
+	},
 
+	get_data: function(url, handler)
+	{
 		var request = new XMLHttpRequest();
-		request.onreadystatechange = callback;
+		request.onreadystatechange = function() { meters.get_post_callback.bind(this)(handler); };
 		request.open("GET", url);
 		try
 		{
 			request.send();
+		}
+		catch (err)
+		{
+			meters.display_error_message("Failed to get data: " + err.message);
+		}
+	},
+
+	post_data: function(url, handler, data)
+	{
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() { meters.get_post_callback.bind(this)(handler); };
+		request.open("POST", url);
+		try
+		{
+			request.send(JSON.stringify(data));
 		}
 		catch (err)
 		{
@@ -71,23 +87,19 @@ var meters = meters ||
 		return thedate.getFullYear() * 10000 + (thedate.getMonth() + 1) * 100 + thedate.getDate();
 	},
 
-	yyyymmdd2date: function(thedate)
+	yyyymmdd2date: function(thedate, hours, minutes, seconds)
 	{
+		hours = (typeof hours === 'undefined') ? 12 : hours;
+		minutes = (typeof minutes === 'undefined') ? 0 : minutes;
+		seconds = (typeof seconds === 'undefined') ? 0 : seconds;
 		var datenum = parseInt(thedate,10);
 		if (isNaN(datenum) || !isFinite(datenum))
 			return "";
 		var year = parseInt(datenum / 10000, 10);
 		var month = parseInt((datenum / 100) % 100, 10) - 1;
 		var day = parseInt(datenum % 100, 10);
-		var nd = new Date(year, month, day, 12, 0, 0, 0);
+		var nd = new Date(year, month, day, hours, minutes, seconds, 0);
 		return nd;
-	},
-
-	formated_date: function(thedate)
-	{
-		var days = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
-		var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-		return days[thedate.getDay()] + " " + thedate.getDate() + " " + months[thedate.getMonth()] + ", " + thedate.getFullYear();
 	},
 
 	endofdef: null

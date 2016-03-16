@@ -3,9 +3,9 @@
 var meter_readings = meter_readings ||
 {
 	meter_types: [
-			{ "name":"Input", "id":"new_id", "tab":"new_tab", "resize":false, "func":function(){meter_readings.new_reading();} },
-			{ "name":"Graph", "id":"graph_id", "tab":"graph_tab", "resize":true, "func":function(){meter_readings.graph();} },
-			{ "name":"Raw", "id":"raw_id", "tab":"raw_tab", "resize":false, "func":function(){meter_readings.raw_data();} },
+			{ "name":"Input", "tab_id":"new_id", "panel_id":"new_tab", "resize":false, "func":function(){meter_readings.new_reading();} },
+			{ "name":"Graph", "tab_id":"graph_id", "panel_id":"graph_tab", "resize":true, "func":function(){meter_readings.graph();} },
+			{ "name":"Raw", "tab_id":"raw_id", "panel_id":"raw_tab", "resize":false, "func":function(){meter_readings.raw_data();} },
 	],
 	meter_type_index: 0,
 	meter_info: null,
@@ -20,15 +20,15 @@ var meter_readings = meter_readings ||
 		{
 			var li = document.createElement("li");
 			li.appendChild(document.createTextNode(this.meter_types[i].name));
-			li.setAttribute("id", this.meter_types[i].id);
+			li.setAttribute("id", this.meter_types[i].tab_id);
 			if (i == 0)
 			{
 				li.className = "selected";
-				document.getElementById(this.meter_types[i].tab).style.display = "inline";
+				document.getElementById(this.meter_types[i].panel_id).style.display = "inline";
 				this.meter_info = this.meter_types[i];
 			}
 			else
-				document.getElementById(this.meter_types[i].tab).style.display= "none";
+				document.getElementById(this.meter_types[i].panel_id).style.display= "none";
 			li.onclick = function(e) { self.set_tab(e.target.id); };
  			ul_h.appendChild(li);
 		}
@@ -61,14 +61,15 @@ var meter_readings = meter_readings ||
 
 	set_tab: function(tab_id)
 	{
-		document.getElementById(this.meter_info.id).className = "null";
-		document.getElementById(this.meter_info.tab).style.display = "none";
+		meters.display_error_message(null);
+		document.getElementById(this.meter_info.tab_id).className = "null";
+		document.getElementById(this.meter_info.panel_id).style.display = "none";
 		for (var i=0; i<this.meter_types.length; i++)
-			if (tab_id === this.meter_types[i].id)
+			if (tab_id === this.meter_types[i].tab_id)
 			{
 				this.meter_info = this.meter_types[i];
 				document.getElementById(tab_id).className = "selected";
-				document.getElementById(this.meter_info.tab).style.display = "inline";
+				document.getElementById(this.meter_info.panel_id).style.display = "inline";
 				this.meter_info.func();
 				break;
 			}
@@ -94,11 +95,54 @@ var meter_readings = meter_readings ||
 
 	add_new_reading: function()
 	{
-		console.log(document.forms.new_reading_form.date.value);
-		console.log(document.forms.new_reading_form.time.value);
-		console.log(document.forms.new_reading_form.gas.value);
-		console.log(document.forms.new_reading_form.electricity.value);
-		this.new_reading();
+		function handler()
+		{
+			this.set_tab(this.meter_info.tab_id);
+		}
+		var the_date = 0;
+		var the_epoch = 0;
+		var gas = 0.0;
+		var electricity = 0.0;
+
+		try
+		{
+			var bits = document.forms.new_reading_form.date.value.split("/");
+			the_date = parseInt(bits[0],10) * 10000 + parseInt(bits[1],10) * 100 + parseInt(bits[2],10);
+			bits = document.forms.new_reading_form.time.value.split(":");
+			the_epoch = meters.yyyymmdd2date(the_date, parseInt(bits[0],10), parseInt(bits[1],10), 0).getTime() / 1000;
+		}
+		catch (err)
+		{
+			meters.display_error_message("Date/Time format error: " + err.message);
+			return;
+		}
+
+		try
+		{
+			gas = parseFloat(document.forms.new_reading_form.gas.value);
+			electricity = parseFloat(document.forms.new_reading_form.electricity.value);
+		}
+		catch (err)
+		{
+			meters.display_error_message("Gas/Electricity format error: " + err.message);
+			return
+		}
+
+		if (isNaN(the_date) || isNaN(the_epoch) || isNaN(gas) || isNaN(electricity))
+		{
+			meters.display_error_message("Value error");
+			return
+		}
+
+		var data = {"date":the_date, "epoch":the_epoch, "reading":{ "gas":gas, "electricity":electricity} };
+		meters.post_data("/meters-api/add_reading.py", handler.bind(this), data);
+	},
+
+	get_url: function()
+	{
+		var start = meters.date2yyyymmdd(this.start_date);
+		var end = meters.date2yyyymmdd(this.end_date);
+		return "/meters-api/get_readings.py" + "?start_date=" + start + "&end_date=" + end;
 	},
 
 	raw_data: function()
@@ -122,7 +166,7 @@ var meter_readings = meter_readings ||
 					the_text += "<tr class='tabeven'>";
 				else
 					the_text += "<tr class='tabodd'>";
-				the_text += "<td>" + meters.formated_date(the_date) + "</td>";
+				the_text += "<td>" + the_date.toDateString() + "</td>";
 				the_text += "<td>" + gas.toFixed(2) + "</td>";
 				the_text += "<td>" + electricity.toFixed(2) + "</td>";
 				if (last_epoch > 0)
@@ -144,7 +188,7 @@ var meter_readings = meter_readings ||
 				the_text += "</tr>\n";
 			}
 			the_text += "</table>\n";
-			document.getElementById(this.meter_info.tab).innerHTML = the_text;
+			document.getElementById(this.meter_info.panel_id).innerHTML = the_text;
 		}
 		var url = this.get_url();
 		this.controls_on(true);
@@ -205,12 +249,5 @@ var meter_readings = meter_readings ||
 		var url = this.get_url();
 		this.controls_on(true);
 		meters.get_data(url, display_graph.bind(this));
-	},
-
-	get_url: function()
-	{
-		var start = meters.date2yyyymmdd(this.start_date);
-		var end = meters.date2yyyymmdd(this.end_date);
-		return "/meters-api/get_readings.py" + "?start_date=" + start + "&end_date=" + end;
 	},
 }

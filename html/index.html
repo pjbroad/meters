@@ -31,12 +31,12 @@
 			<br>
 			<div id="form_parent">
 				<form id="new_reading_form" class="center">
-					Date<input type="text" name="date" value="" size="10">
-					&nbsp;Time<input type="text" name="time" value="" size="5">
+					Date<input type="text" name="date" value="" size="10" required>
+					&nbsp;Time<input type="text" name="time" value="" size="5" required>
 					<br><br>Gas<br>
-					<input type="text" name="gas" value="">
+					<input type="text" name="gas" value="" required>
 					<br><br>Electricity<br>
-					<input type="text" name="electricity" value="">
+					<input type="text" name="electricity" value="" required>
 					<br><br>
 					<input type="button" value="Add New Reading" onclick="meter_readings.add_new_reading()">
 				</form>
