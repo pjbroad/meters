@@ -3,7 +3,7 @@
 var meter_readings = meter_readings ||
 {
 	meter_types: [
-			{ "name":"Input", "tab_id":"new_id", "panel_id":"new_tab", "resize":false, "func":function(){meter_readings.new_reading();} },
+			{ "name":"New", "tab_id":"new_id", "panel_id":"new_tab", "resize":false, "func":function(){meter_readings.new_reading();} },
 			{ "name":"Graph", "tab_id":"graph_id", "panel_id":"graph_tab", "resize":true, "func":function(){meter_readings.graph();} },
 			{ "name":"Raw", "tab_id":"raw_id", "panel_id":"raw_tab", "resize":false, "func":function(){meter_readings.raw_data();} },
 	],
