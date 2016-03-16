@@ -3,16 +3,14 @@
 <head>
 <link href="meters.css" rel="stylesheet" type="text/css">
 <link href="c3/c3.css" rel="stylesheet" type="text/css">
-<!--<link href="jquery/ui/jquery-ui.min.css" rel="stylesheet" type="text/css">-->
+<link href="jquery/ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Meter Reading</title>
 <script src="meters.js"></script>
 <script src="readings.js"></script>
-<!--
 <script src="jquery/jquery-2.1.4.min.js"></script>
 <script src="jquery/ui/jquery-ui.min.js"></script>
--->
 <script src="d3/d3.min.js" charset="utf-8"></script>
 <script src="c3/c3.min.js"></script>
 </head>
@@ -23,10 +21,32 @@
 			<ul id="meters_tabs"></ul>
 			<h3></h3>
 		</div>
-		<div id="new_tab">new</div>
-		<div id="raw_tab">raw</div>
+		<div id="controls">
+			<form>
+				Start: <input type="button" id="start_datepicker"  onchange="meter_readings.update_start_date()">
+				End: <input type="button" id="end_datepicker"  onchange="meter_readings.update_end_date()">
+			</form>
+		</div>
+		<div id="new_tab">
+			<br>
+			<div id="form_parent">
+				<form id="new_reading_form" class="center">
+					Date<input type="text" name="date" value="" size="10">
+					&nbsp;Time<input type="text" name="time" value="" size="5">
+					<br><br>Gas<br>
+					<input type="text" name="gas" value="">
+					<br><br>Electricity<br>
+					<input type="text" name="electricity" value="">
+					<br><br>
+					<input type="button" value="Add New Reading" onclick="meter_readings.add_new_reading()">
+				</form>
+			</div>
+		</div>
+		<div id="raw_tab"></div>
 		<div id="message_panel"></div>
 	</div>
-	<div id="readings_graph"></div>
+	<div id="graph_tab">
+		<div id="readings_graph"></div>
+	</div>
 </body>
 </html>

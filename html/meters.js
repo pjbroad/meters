@@ -9,7 +9,7 @@ var meters = meters ||
 		window.onresize = function()
 		{
 			clearTimeout(doit);
-			doit = setTimeout(meter_readings.update.bind(meter_readings), 100);
+			doit = setTimeout(meter_readings.resize.bind(meter_readings), 100);
 		};
 	},
 
@@ -87,7 +87,7 @@ var meters = meters ||
 	{
 		var days = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
 		var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-		return days[thedate.getDay()] + " " + thedate.getDate() + " " + months[thedate.getMonth()];
+		return days[thedate.getDay()] + " " + thedate.getDate() + " " + months[thedate.getMonth()] + ", " + thedate.getFullYear();
 	},
 
 	endofdef: null

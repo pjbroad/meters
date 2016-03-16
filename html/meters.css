@@ -90,3 +90,45 @@ h3
 	fill: white !important;
 	stroke-width: 1px;
 }
+
+table.raw
+{
+	table-layout: fixed;
+	width: 100%;
+}
+
+.tabheader
+{
+	background-color: #B2B2FF;
+	text-align: center;
+	font-weight: bold;
+}
+
+.tabodd
+{
+	background-color: white;
+}
+
+.tabeven
+{
+	background-color: lightgrey;
+}
+
+td, th
+{
+	padding: 5px;
+	text-align: right;
+}
+
+#form_parent
+{
+	display: table;
+}
+
+#new_reading_form
+{
+	font-size: 1.5em; 
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+}
