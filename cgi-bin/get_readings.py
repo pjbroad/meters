@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python
 
 import sys
 import common
@@ -9,7 +9,7 @@ if __name__ == '__main__':
 	output = common.output()
 	params = common.params()
 	params.get( {	"start_date": { "check":str.isdigit, "type": int, "def": 0},
-					"end_date": { "check":str.isdigit, "type": int, "def": sys.maxint} } )
+					"end_date": { "check":str.isdigit, "type": int, "def": sys.maxsize} } )
 
 	if params.valid:
 		db = common.db()

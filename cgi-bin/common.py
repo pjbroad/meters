@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python
 
 import os
 import sys
@@ -11,7 +11,7 @@ def get_config(config_file = os.path.join(os.path.dirname(__file__), "..", "conf
 	if os.path.isfile(config_file):
 		return json.load(open(config_file))
 	else:
-		return { "hostname": "harry", "port": 27017, "username": None, "password": None, "db_name": "meters", "httpd_path": "/var/www/meters" }
+		return { "hostname": "harry", "port": 27017, "username": None, "password": None, "db_name": "meters" }
 
 class db:
 
@@ -72,13 +72,13 @@ class params:
 
 	def get(self, fields):
 
-		for field in fields.iterkeys():
+		for field in iter(fields.keys()):
 			if fields[field]["def"] != None:
 				self.values[field] = fields[field]["def"]
 
 		if 'GATEWAY_INTERFACE' in os.environ:
 			form = cgi.FieldStorage(keep_blank_values=True)
-			for field in fields.iterkeys():
+			for field in iter(fields.keys()):
 				if field in form:
 					value = form[field].value
 					if value and fields[field]["check"](value):
@@ -91,7 +91,7 @@ class params:
 						if value and fields[name]["check"](value):
 							self.values[name] = fields[name]["type"](value)
 
-		for field in fields.iterkeys():
+		for field in iter(fields.keys()):
 			if not field in self.values:
 				self.valid = False
 				self.message = "Missing or invalid (" + field + ") parameter"
