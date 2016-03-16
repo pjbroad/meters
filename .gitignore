@@ -3,3 +3,4 @@ html/d3
 html/jquery
 backup
 *.pyc
+config/config.json
