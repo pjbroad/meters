@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<link href="meters.css" rel="stylesheet" type="text/css">
-<link href="c3/c3.css" rel="stylesheet" type="text/css">
-<link href="jquery/ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Meter Reading</title>
+<link href="meters.css" rel="stylesheet" type="text/css">
+<link href="c3/c3.css" rel="stylesheet" type="text/css">
+<link href="jquery/ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<script src="common.js"></script>
 <script src="meters.js"></script>
-<script src="readings.js"></script>
 <script src="jquery/jquery-2.1.4.min.js"></script>
 <script src="jquery/ui/jquery-ui.min.js"></script>
 <script src="d3/d3.min.js" charset="utf-8"></script>
@@ -25,8 +25,8 @@
 		</div>
 		<div id="controls">
 			<form>
-				<input type="button" id="start_datepicker"  onchange="meter_readings.update_start_date()">
-				&nbsp;to&nbsp;<input type="button" id="end_datepicker"  onchange="meter_readings.update_end_date()">
+				<input type="button" id="start_datepicker"  onchange="meters.update_start_date()">
+				&nbsp;to&nbsp;<input type="button" id="end_datepicker"  onchange="meters.update_end_date()">
 			</form>
 		</div>
 		<div id="new_tab">
@@ -40,7 +40,7 @@
 					<br><br>Electricity<br>
 					<input type="text" name="electricity" value="" required>
 					<br><br>
-					<input type="button" value="Add New Reading" onclick="meter_readings.add_new_reading()">
+					<input type="button" value="Add New Reading" onclick="meters.add_new_reading()">
 				</form>
 			</div>
 		</div>
