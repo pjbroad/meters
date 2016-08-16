@@ -58,20 +58,20 @@ var meters = meters ||
 	update_start_date: function()
 	{
 		this.start_date = $( "#start_datepicker" ).datepicker( "getDate" );
-		common.display_error_message(null);
+		error_message.clear();
 		this.meter_info.func();
 	},
 
 	update_end_date: function()
 	{
 		this.end_date = $( "#end_datepicker" ).datepicker( "getDate" );
-		common.display_error_message(null);
+		error_message.clear();
 		this.meter_info.func();
 	},
 
 	set_tab: function(tab_id)
 	{
-		common.display_error_message(null);
+		error_message.clear();
 		document.getElementById(this.meter_info.tab_id).className = "null";
 		document.getElementById(this.meter_info.panel_id).style.display = "none";
 		for (var i=0; i<this.meter_types.length; i++)
@@ -119,11 +119,11 @@ var meters = meters ||
 			var bits = document.forms.new_reading_form.date.value.split("/");
 			the_date = parseInt(bits[0],10) * 10000 + parseInt(bits[1],10) * 100 + parseInt(bits[2],10);
 			bits = document.forms.new_reading_form.time.value.split(":");
-			the_epoch = common.yyyymmdd2date(the_date, parseInt(bits[0],10), parseInt(bits[1],10), 0).getTime() / 1000;
+			the_epoch = integer_date.yyyymmdd2date(the_date, parseInt(bits[0],10), parseInt(bits[1],10), 0).getTime() / 1000;
 		}
 		catch (err)
 		{
-			common.display_error_message("Date/Time format error: " + err.message);
+			error_message.display("Date/Time format error: " + err.message);
 			return;
 		}
 
@@ -134,24 +134,24 @@ var meters = meters ||
 		}
 		catch (err)
 		{
-			common.display_error_message("Gas/Electricity format error: " + err.message);
+			error_message.display("Gas/Electricity format error: " + err.message);
 			return
 		}
 
 		if (isNaN(the_date) || isNaN(the_epoch) || isNaN(gas) || isNaN(electricity))
 		{
-			common.display_error_message("Value error");
+			error_message.display("Value error");
 			return
 		}
 
 		var data = {"date":the_date, "epoch":the_epoch, "reading":{ "gas":gas, "electricity":electricity} };
-		common.post_data("/meters-api/add_reading.py", handler.bind(this), data);
+		request_common.post_data("/meters-api/add_reading.py", handler.bind(this), data);
 	},
 
 	get_url: function()
 	{
-		var start = common.date2yyyymmdd(this.start_date);
-		var end = common.date2yyyymmdd(this.end_date);
+		var start = integer_date.date2yyyymmdd(this.start_date);
+		var end = integer_date.date2yyyymmdd(this.end_date);
 		return "/meters-api/get_readings.py" + "?start_date=" + start + "&end_date=" + end;
 	},
 
@@ -202,7 +202,7 @@ var meters = meters ||
 		}
 		var url = this.get_url();
 		this.controls_on(true);
-		common.get_data(url, display_graph.bind(this));
+		request_common.get_data(url, display_graph.bind(this));
 	},
 
 	graph: function()
@@ -258,6 +258,6 @@ var meters = meters ||
 		}
 		var url = this.get_url();
 		this.controls_on(true);
-		common.get_data(url, display_graph.bind(this));
+		request_common.get_data(url, display_graph.bind(this));
 	},
 }

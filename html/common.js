@@ -1,16 +1,23 @@
+//	Copyright 2016 Paul Broadhead
+//	Contact: pjbroad@twinmoons.org.uk
+//
+//	This program is free software: you can redistribute it and/or modify
+//	it under the terms of the GNU General Public License as published by
+//	the Free Software Foundation, either version 3 of the License, or
+//	(at your option) any later version.
+//
+//	This program is distributed in the hope that it will be useful,
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//	GNU General Public License for more details.
+//
+//	You should have received a copy of the GNU General Public License
+//	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 "use strict";
 
-var common = common ||
+var request_common = request_common ||
 {
-	display_error_message: function(message)
-	{
-		var panel_h = document.getElementById("message_panel");
-		if (message && message.length > 0)
-			panel_h.innerHTML = message;
-		else
-			panel_h.innerHTML = "";
-	},
-
 	get_post_callback: function(handler)
 	{
 		if (this.readyState === this.DONE)
@@ -19,31 +26,31 @@ var common = common ||
 			{
 				if (!this.responseText || this.responseText.length === 0)
 				{
-					common.display_error_message("Empty response for get_data()");
+					error_message.display("Empty response for get_data()");
 					return;
 				}
 				var response = JSON.parse(this.responseText);
 				if (typeof response.status === "undefined")
-					common.display_error_message("Invalid response for getdata: " + this.responseText);
+					error_message.display("Invalid response for getdata: " + this.responseText);
 				else if (!response.status)
 				{
 					if ((typeof response.message === "undefined") || (response.message.length<=0))
-						common.display_error_message("Unknown error");
+						error_message.display("Unknown error");
 					else
-						common.display_error_message(response.message);
+						error_message.display(response.message);
 				}
 				else
 					handler(response);
 			}
 			else
-				common.display_error_message("Unexpected http status code: " + this.status);
+				error_message.display("Unexpected http status code: " + this.status);
 		}
 	},
 
 	get_data: function(url, handler)
 	{
 		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() { common.get_post_callback.bind(this)(handler); };
+		request.onreadystatechange = function() { request_common.get_post_callback.bind(this)(handler); };
 		request.open("GET", url);
 		try
 		{
@@ -51,14 +58,14 @@ var common = common ||
 		}
 		catch (err)
 		{
-			common.display_error_message("Failed to get data: " + err.message);
+			error_message.display("Failed to get data: " + err.message);
 		}
 	},
 
 	post_data: function(url, handler, data)
 	{
 		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() { common.get_post_callback.bind(this)(handler); };
+		request.onreadystatechange = function() { request_common.get_post_callback.bind(this)(handler); };
 		request.open("POST", url);
 		try
 		{
@@ -66,9 +73,15 @@ var common = common ||
 		}
 		catch (err)
 		{
-			common.display_error_message("Failed to get data: " + err.message);
+			error_message.display("Failed to get data: " + err.message);
 		}
-	},
+	}
+
+}
+
+
+var integer_date = integer_date ||
+{
 
 	date2yyyymmdd: function(thedate)
 	{
@@ -88,7 +101,23 @@ var common = common ||
 		var day = parseInt(datenum % 100, 10);
 		var nd = new Date(year, month, day, hours, minutes, seconds, 0);
 		return nd;
+	}
+}
+
+
+var error_message = error_message ||
+{
+	display: function(message)
+	{
+		var panel_h = document.getElementById("error_message_panel");
+		if (message && message.length > 0)
+			panel_h.innerHTML = message;
+		else
+			panel_h.innerHTML = "";
 	},
 
-	endofdef: null
+	clear: function()
+	{
+		this.display(null);
+	}
 }

@@ -1,5 +1,21 @@
 #! /usr/bin/env python
 
+#	Copyright 2016 Paul Broadhead
+#	Contact: pjbroad@twinmoons.org.uk
+#
+#	This program is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+#	(at your option) any later version.
+#
+#	This program is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#
+#	You should have received a copy of the GNU General Public License
+#	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import os
 import sys
 import cgi
@@ -7,11 +23,11 @@ import json
 import re
 import pymongo
 
-def get_config(config_file = os.path.join(os.path.dirname(__file__), "..", "config/config.json")):
+def get_config(config_file = os.path.join(os.path.dirname(__file__), "..", "config/mongodb_config.json")):
 	if os.path.isfile(config_file):
 		return json.load(open(config_file))
 	else:
-		return { "hostname": "localhost", "port": 27017, "username": None, "password": None, "db_name": "meters" }
+		return { "hostname": "localhost", "port": 27017, "username": None, "password": None, "db_name": None }
 
 class db:
 
