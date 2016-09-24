@@ -1,6 +1,4 @@
-html/c3
-html/d3
-html/jquery
+html/lib
 backup
 *.pyc
 config/mongodb_config.json
