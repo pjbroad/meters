@@ -48,6 +48,19 @@ def add():
 	readings_collection.insert(data)
 	return common.format_success(None)
 
+@app.route("/last")
+def last():
+	return common.format_success(readings_collection.find_one({ "$query":{}, "$orderby": { "epoch" : -1 } }, {"_id": False}))
+
+@app.route("/delete")
+def delete():
+	epoch = flask.request.args.get("epoch",None)
+	if not epoch or len(epoch) < 1:
+		return common.format_error("Missing epoch for delete")
+	response = readings_collection.remove({"epoch":int(epoch)})
+	print(response)
+	return common.format_success(response)
+
 
 if __name__ == "__main__":
 	the_debug = False

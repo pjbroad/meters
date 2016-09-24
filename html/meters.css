@@ -138,3 +138,10 @@ td, th
   color: inherit;
   text-decoration: inherit;
 }
+
+#last_tab
+{
+	display: table-cell;
+	text-align: center;
+	font-size: 1.5em;
+}

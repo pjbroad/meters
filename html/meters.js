@@ -4,12 +4,14 @@ var meters = meters ||
 {
 	meter_types: [
 			{ "name":"New", "tab_id":"new_id", "panel_id":"new_tab", "resize":false, "func":function(){meters.new_reading();} },
+			{ "name":"Last", "tab_id":"last_id", "panel_id":"last_tab", "resize":false, "func":function(){meters.show_last();} },
 			{ "name":"Graph", "tab_id":"graph_id", "panel_id":"graph_tab", "resize":true, "func":function(){meters.graph();}, "start":true },
 			{ "name":"Raw", "tab_id":"raw_id", "panel_id":"raw_tab", "resize":false, "func":function(){meters.raw_data();} },
 	],
 	meter_info: null,
 	end_date: new Date(),
 	start_date: new Date(),
+	last_epoch: null,
 
 	init_page: function()
 	{
@@ -107,7 +109,7 @@ var meters = meters ||
 	{
 		function handler()
 		{
-			this.set_tab(this.meter_info.tab_id);
+			this.set_tab("last_id");
 		}
 		var the_date = 0;
 		var the_epoch = 0;
@@ -153,6 +155,48 @@ var meters = meters ||
 		var start = integer_date.date2yyyymmdd(this.start_date);
 		var end = integer_date.date2yyyymmdd(this.end_date);
 		return "/meters_api/get" + "?start_date=" + start + "&end_date=" + end;
+	},
+
+	formated_date_time: function(the_date)
+	{
+		var days = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
+		var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+		var the_time = ("0" + the_date.getHours()).slice(-2) + ":" + ("0" + the_date.getMinutes()).slice(-2);
+		return days[the_date.getDay()] + " " + the_date.getDate() + " " + months[the_date.getMonth()] + " " + the_time + ", " + the_date.getFullYear();
+	},
+
+
+	delete_last: function()
+	{
+		function handler(reponse)
+		{
+			this.set_tab("last_id");
+		}
+		if (this.last_epoch)
+		{
+			request_common.get_data("/meters_api/delete?epoch=" + this.last_epoch, handler.bind(this));
+			this.last_epoch = null;
+		}
+	},
+
+	show_last: function()
+	{
+		function handler(response)
+		{
+			if (response.status)
+			{
+				console.log(response.data);
+				var the_text = "</br>";
+				the_text += meters.formated_date_time(new Date(response.data.epoch * 1000)) + "</br>";
+				the_text += "Epoch: " + response.data.epoch + "</br>";
+				the_text += "Date: " + response.data.date + "</br>";
+				the_text += "Gas: " + response.data.reading.gas + "</br>";
+				the_text += "Electricity: " + response.data.reading.electricity + "</br>";
+				document.getElementById("last_reading").innerHTML = the_text;
+				this.last_epoch = response.data.epoch;
+			}
+		}
+		request_common.get_data("/meters_api/last", handler.bind(this));
 	},
 
 	raw_data: function()
