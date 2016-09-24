@@ -145,14 +145,14 @@ var meters = meters ||
 		}
 
 		var data = {"date":the_date, "epoch":the_epoch, "reading":{ "gas":gas, "electricity":electricity} };
-		request_common.post_data("/meters-api/add_reading.py", handler.bind(this), data);
+		request_common.post_data("/meters_api/add", handler.bind(this), data);
 	},
 
 	get_url: function()
 	{
 		var start = integer_date.date2yyyymmdd(this.start_date);
 		var end = integer_date.date2yyyymmdd(this.end_date);
-		return "/meters-api/get_readings.py" + "?start_date=" + start + "&end_date=" + end;
+		return "/meters_api/get" + "?start_date=" + start + "&end_date=" + end;
 	},
 
 	raw_data: function()
