@@ -26,6 +26,7 @@ import sys
 
 db = common.db()
 readings_collection = db.database.readings
+deleted_collection = db.database.deleted_readings
 app = flask.Flask(__name__)
 
 
@@ -54,13 +55,19 @@ def last():
 
 @app.route("/delete")
 def delete():
-	epoch = flask.request.args.get("epoch",None)
-	if not epoch or len(epoch) < 1:
+	epoch_str = flask.request.args.get("epoch",None)
+	if not epoch_str or len(epoch_str) < 1:
 		return common.format_error("Missing epoch for delete")
-	response = readings_collection.remove({"epoch":int(epoch)})
-	print(response)
-	return common.format_success(response)
-
+	if not epoch_str.isdigit:
+		return common.format_error("Invalid epoch")
+	epoch = int(epoch_str)
+	to_delete = list(readings_collection.find({"epoch":epoch}))
+	if len(to_delete) > 0:
+		deleted_collection.insert(to_delete)
+		response = readings_collection.remove({"epoch":epoch})
+		return common.format_success(response)
+	else:
+		return common.format_error("Nothing for epoch [%d] to delete" %(epoch))
 
 if __name__ == "__main__":
 	the_debug = False

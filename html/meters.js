@@ -165,15 +165,16 @@ var meters = meters ||
 		return days[the_date.getDay()] + " " + the_date.getDate() + " " + months[the_date.getMonth()] + " " + the_time + ", " + the_date.getFullYear();
 	},
 
-
 	delete_last: function()
 	{
 		function handler(reponse)
 		{
 			this.set_tab("last_id");
 		}
-		if (this.last_epoch)
+		var enable_delete_h = document.getElementById("enable_delete_button");
+		if (this.last_epoch && enable_delete_h.checked)
 		{
+			enable_delete_h.checked = false;
 			request_common.get_data("/meters_api/delete?epoch=" + this.last_epoch, handler.bind(this));
 			this.last_epoch = null;
 		}
@@ -185,7 +186,6 @@ var meters = meters ||
 		{
 			if (response.status)
 			{
-				console.log(response.data);
 				var the_text = "</br>";
 				the_text += meters.formated_date_time(new Date(response.data.epoch * 1000)) + "</br>";
 				the_text += "Epoch: " + response.data.epoch + "</br>";
@@ -196,6 +196,7 @@ var meters = meters ||
 				this.last_epoch = response.data.epoch;
 			}
 		}
+		this.controls_on(false);
 		request_common.get_data("/meters_api/last", handler.bind(this));
 	},
 

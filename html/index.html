@@ -48,7 +48,9 @@
 		<div id="last_tab">
 			<div id="form_parent">
 				<div id="last_reading"></div>
-				</br><button onclick="meters.delete_last(1); return false;">Delete</button>
+				</br>
+				<span id="delete_button"><button onclick="meters.delete_last(); return false;">Delete</button></span>
+				&nbsp;Enable<input type="checkbox" id="enable_delete_button">
 			</div>
 		</div>
 		<div id="error_message_panel"></div>
