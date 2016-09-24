@@ -1,6 +1,0 @@
-#! /usr/bin/env bash
-
-cd ~/code/meters/backup/
-outfile="meters_backup_$(date +"%u")"
-rm -rf $outfile
-mongodump --db meters --out $outfile # --host harry

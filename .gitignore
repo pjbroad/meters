@@ -1,4 +1,3 @@
 html/lib
-backup
 *.pyc
 config/mongodb_config.json
