@@ -243,7 +243,8 @@ var meters = meters ||
 				the_text += "</tr>\n";
 			}
 			the_text += "</table>\n";
-			document.getElementById(this.meter_info.panel_id).innerHTML = the_text;
+			if (this.meter_info.name == "Raw")
+				document.getElementById(this.meter_info.panel_id).innerHTML = the_text;
 		}
 		var url = this.get_url();
 		this.controls_on(true);
