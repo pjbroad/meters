@@ -147,14 +147,14 @@ var meters = meters ||
 		}
 
 		var data = {"date":the_date, "epoch":the_epoch, "reading":{ "gas":gas, "electricity":electricity} };
-		request_common.post_data("/meters_api/add", handler.bind(this), data);
+		request_common.post_data(meters_config.paths["api"] + "/add", handler.bind(this), data);
 	},
 
 	get_url: function()
 	{
 		var start = integer_date.date2yyyymmdd(this.start_date);
 		var end = integer_date.date2yyyymmdd(this.end_date);
-		return "/meters_api/get" + "?start_date=" + start + "&end_date=" + end;
+		return meters_config.paths["api"] + "/get" + "?start_date=" + start + "&end_date=" + end;
 	},
 
 	formated_date_time: function(the_date)
@@ -175,7 +175,7 @@ var meters = meters ||
 		if (this.last_epoch && enable_delete_h.checked)
 		{
 			enable_delete_h.checked = false;
-			request_common.get_data("/meters_api/delete?epoch=" + this.last_epoch, handler.bind(this));
+			request_common.get_data(meters_config.paths["api"] + "/delete?epoch=" + this.last_epoch, handler.bind(this));
 			this.last_epoch = null;
 		}
 	},
@@ -197,7 +197,7 @@ var meters = meters ||
 			}
 		}
 		this.controls_on(false);
-		request_common.get_data("/meters_api/last", handler.bind(this));
+		request_common.get_data(meters_config.paths["api"] + "/last", handler.bind(this));
 	},
 
 	raw_data: function()
