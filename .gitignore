@@ -1,3 +1,4 @@
 html/lib
+html/meters_config.js
 *.pyc
 config/mongodb_config.json
