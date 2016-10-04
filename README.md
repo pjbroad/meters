@@ -114,13 +114,13 @@ mkdir -p jquery-3.1.0 && cd jquery-3.1.0 && wget -qO jquery.min.js https://code.
 wget https://jqueryui.com/resources/download/jquery-ui-1.12.0.zip && unzip jquery-ui-1.12.0.zip && rm jquery-ui-1.12.0.zip
 
 cd $CODEBASE/html && mkdir -p lib && cd lib
-ln -s $DEPSBASE/js_libraries/c3-0.4.11/c3.min.css
-ln -s $DEPSBASE/js_libraries/c3-0.4.11/c3.min.js
-ln -s $DEPSBASE/js_libraries/d3-v3.5.17/d3.min.js
-ln -s $DEPSBASE/js_libraries/jquery-3.1.0/jquery.min.js
-ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.css
-ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.js
-ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.0/images
+cp $DEPSBASE/js_libraries/c3-0.4.11/c3.min.css .
+cp $DEPSBASE/js_libraries/c3-0.4.11/c3.min.js .
+cp $DEPSBASE/js_libraries/d3-v3.5.17/d3.min.js .
+cp $DEPSBASE/js_libraries/jquery-3.1.0/jquery.min.js .
+cp $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.css .
+cp $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.js .
+cp -R $DEPSBASE/js_libraries/jquery-ui-1.12.0/images .
 ```
 
 #### Testing the database set-up
