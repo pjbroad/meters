@@ -4,10 +4,10 @@
 
 Meters is a web application that uses MongoDB to record and retrieve 
 utility meter readings. Mongo access is provided through a python-flask 
-API. Currently gas and electricity readings are supported but other 
-utilities could be added easily. While raw readings are recorded, the 
-plotted graph shows the difference between the current and previous 
-readings, calculated as units-per-day.
+API. I use gas and electricity readings but other utilities can be set 
+when configuring the application. While raw readings are recorded but 
+the plotted graph shows the difference between the current and previous 
+readings, calculated as units-consumed-per-day.
 
 ![Web Application screen shot](webapp.png)
 
@@ -91,10 +91,11 @@ Finally, restart your Apache server
 sudo service apache2 reload
 ```
 
-#### Configure paths used by JavaScript
+#### Configure web application options
 
 Modify server/config/template_meters_config.js to refer to your api 
-directory then copy to html/meters_config.js. For example:
+directory then copy to html/meters_config.js. Also set the type of 
+utility meters you wish to use.  For example:
 
 ```
 cd $CODEBASE/config
@@ -134,7 +135,7 @@ server certificate if needed (--cacert <file>) and URL. For example:
 
 ```
 curl -X POST -d @- http://localhost/meters_api/add << EOT
-{"date":$(date +"%Y%m%d"), "epoch":$(date +"%s"), "reading":{"electricity":42, "gas":1492}}
+{"date":$(date +"%Y%m%d"), "epoch":$(date +"%s"), "reading":{"electricity":42, "gas":999}}
 EOT
 curl http://localhost/meters_api/last
 ```
@@ -146,11 +147,11 @@ your set-up.
 {
     "status":true,
     "data":{
-        "date":20160907,
-        "epoch":1473282720,
+        "date":20161004,
+        "epoch":1475617086,
         "reading":{
-            "electricity":48433.5,
-            "gas":10447.1926
+            "electricity":42,
+            "gas":999
         }
     }
 }
