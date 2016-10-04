@@ -2,7 +2,7 @@
 
 var meters = meters ||
 {
-	meter_types: [
+	meter_tabs: [
 			{ "name":"New", "tab_id":"new_id", "panel_id":"new_tab", "resize":false, "func":function(){meters.new_reading();} },
 			{ "name":"Last", "tab_id":"last_id", "panel_id":"last_tab", "resize":false, "func":function(){meters.show_last();} },
 			{ "name":"Graph", "tab_id":"graph_id", "panel_id":"graph_tab", "resize":true, "func":function(){meters.graph();}, "start":true },
@@ -20,19 +20,19 @@ var meters = meters ||
 
 		this.start_date.setFullYear(this.start_date.getFullYear() - 1);
 
-		for (var i=0; i<this.meter_types.length; i++)
+		for (var i=0; i<this.meter_tabs.length; i++)
 		{
 			var li = document.createElement("li");
-			li.appendChild(document.createTextNode(this.meter_types[i].name));
-			li.setAttribute("id", this.meter_types[i].tab_id);
-			if (this.meter_types[i].start)
+			li.appendChild(document.createTextNode(this.meter_tabs[i].name));
+			li.setAttribute("id", this.meter_tabs[i].tab_id);
+			if (this.meter_tabs[i].start)
 			{
 				li.className = "selected";
-				document.getElementById(this.meter_types[i].panel_id).style.display = "inline";
-				this.meter_info = this.meter_types[i];
+				document.getElementById(this.meter_tabs[i].panel_id).style.display = "inline";
+				this.meter_info = this.meter_tabs[i];
 			}
 			else
-				document.getElementById(this.meter_types[i].panel_id).style.display= "none";
+				document.getElementById(this.meter_tabs[i].panel_id).style.display= "none";
 			li.onclick = function(e) { self.set_tab(e.target.id); };
  			ul_h.appendChild(li);
 		}
@@ -40,6 +40,14 @@ var meters = meters ||
 		$( "#start_datepicker" ).datepicker( "setDate", this.start_date);
 		$( "#end_datepicker" ).datepicker({dateFormat: "D M d yy", changeMonth: true, changeYear: true});
 		$( "#end_datepicker" ).datepicker( "setDate", this.end_date);
+
+		var input_h = document.getElementById("reading_values");
+		for (var i=0; i<meters_config.types.length; i++)
+		{
+			var newdiv = document.createElement('div');
+			newdiv.innerHTML = "<br>" + meters_config.types[i].prompt + "<br><input type=\"text\" name=\"" + meters_config.types[i].name + "\" value=\"\" required>";
+			input_h.appendChild(newdiv);
+		}
 
 		var doit;
 		window.onresize = function()
@@ -76,10 +84,10 @@ var meters = meters ||
 		error_message.clear();
 		document.getElementById(this.meter_info.tab_id).className = "null";
 		document.getElementById(this.meter_info.panel_id).style.display = "none";
-		for (var i=0; i<this.meter_types.length; i++)
-			if (tab_id === this.meter_types[i].tab_id)
+		for (var i=0; i<this.meter_tabs.length; i++)
+			if (tab_id === this.meter_tabs[i].tab_id)
 			{
-				this.meter_info = this.meter_types[i];
+				this.meter_info = this.meter_tabs[i];
 				document.getElementById(tab_id).className = "selected";
 				document.getElementById(this.meter_info.panel_id).style.display = "inline";
 				this.meter_info.func();
@@ -99,10 +107,12 @@ var meters = meters ||
 	{
 		var now = new Date();
 		this.controls_on(false);
+		var inputs = document.forms["new_reading_form"].getElementsByTagName("input");
+		for (var i=0; i<inputs.length; i++)
+			if (inputs[i].type == "text")
+				inputs[i].value = "";
 		document.forms.new_reading_form.date.value = now.getFullYear() + "/" + ("0" + (now.getMonth()+1)).slice(-2) + "/" + ("0" + now.getDate()).slice(-2);
 		document.forms.new_reading_form.time.value = ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2);
-		document.forms.new_reading_form.gas.value = "";
-		document.forms.new_reading_form.electricity.value = "";
 	},
 
 	add_new_reading: function()
@@ -113,40 +123,50 @@ var meters = meters ||
 		}
 		var the_date = 0;
 		var the_epoch = 0;
-		var gas = 0.0;
-		var electricity = 0.0;
+		var values = {};
 
-		try
+		var inputs = document.forms["new_reading_form"].getElementsByTagName("input");
+		for (var i=0; i<inputs.length; i++)
+			if (inputs[i].type == "text")
+			{
+				try
+				{
+					if (inputs[i].name == "date")
+					{
+						var bits = inputs[i].value.split("/");
+						the_date = parseInt(bits[0],10) * 10000 + parseInt(bits[1],10) * 100 + parseInt(bits[2],10);
+					}
+					else if (inputs[i].name == "time")
+					{
+						bits = inputs[i].value.split(":");
+						the_epoch = integer_date.yyyymmdd2date(the_date, parseInt(bits[0],10), parseInt(bits[1],10), 0).getTime() / 1000;
+					}
+					else
+					{
+						values[inputs[i].name] = parseFloat(inputs[i].value);
+						if (isNaN(values[inputs[i].name]))
+						{
+							error_message.display("Value error: " + inputs[i].name);
+							return;
+						}
+					}
+				}
+				catch (err)
+				{
+					error_message.display(inputs[i].name + " format error: " + err.message);
+					return;
+				}
+			}
+
+		if (isNaN(the_date) || isNaN(the_epoch))
 		{
-			var bits = document.forms.new_reading_form.date.value.split("/");
-			the_date = parseInt(bits[0],10) * 10000 + parseInt(bits[1],10) * 100 + parseInt(bits[2],10);
-			bits = document.forms.new_reading_form.time.value.split(":");
-			the_epoch = integer_date.yyyymmdd2date(the_date, parseInt(bits[0],10), parseInt(bits[1],10), 0).getTime() / 1000;
-		}
-		catch (err)
-		{
-			error_message.display("Date/Time format error: " + err.message);
+			error_message.display("Date/Time value error");
 			return;
 		}
 
-		try
-		{
-			gas = parseFloat(document.forms.new_reading_form.gas.value);
-			electricity = parseFloat(document.forms.new_reading_form.electricity.value);
-		}
-		catch (err)
-		{
-			error_message.display("Gas/Electricity format error: " + err.message);
-			return
-		}
+		console.log(values);
 
-		if (isNaN(the_date) || isNaN(the_epoch) || isNaN(gas) || isNaN(electricity))
-		{
-			error_message.display("Value error");
-			return
-		}
-
-		var data = {"date":the_date, "epoch":the_epoch, "reading":{ "gas":gas, "electricity":electricity} };
+		var data = {"date":the_date, "epoch":the_epoch, "reading":values };
 		request_common.post_data(meters_config.paths["api"] + "/add", handler.bind(this), data);
 	},
 
@@ -190,8 +210,8 @@ var meters = meters ||
 				the_text += meters.formated_date_time(new Date(response.data.epoch * 1000)) + "</br>";
 				the_text += "Epoch: " + response.data.epoch + "</br>";
 				the_text += "Date: " + response.data.date + "</br>";
-				the_text += "Gas: " + response.data.reading.gas + "</br>";
-				the_text += "Electricity: " + response.data.reading.electricity + "</br>";
+				for (var key in response.data.reading)
+					the_text += key + ": " + response.data.reading[key] + "</br>";
 				document.getElementById("last_reading").innerHTML = the_text;
 				this.last_epoch = response.data.epoch;
 			}
@@ -206,15 +226,22 @@ var meters = meters ||
 		{
 			var data = response.data;
 			var last_epoch = -1;
-			var last_gas = -1;
-			var last_electricity = -1;
+			var last_values = [];
 			var the_text = "<table class='raw'>";
-			the_text += "<tr class='tabheader'><th>&nbsp;</th><th colspan='2'>Reading</th><th>&nbsp;</th><th colspan='2'>Average Units Per Day</th></tr>";
-			the_text += "<tr class='tabheader'><th>Date</th><th>Gas</th><th>Elec</th><th>Elapse Days</th><th>Gas Used</th><th>Elec Used</th></tr>";
+			the_text += "<tr class='tabheader'><th>&nbsp;</th><th colspan='" + meters_config.types.length + "'>Reading</th><th>&nbsp;</th>";
+			the_text += "<th colspan='" + meters_config.types.length + "'>Average Units Per Day</th></tr>";
+			the_text += "<tr class='tabheader'><th>Date</th>";
+			for (var i=0; i<meters_config.types.length; i++)
+				the_text += "<th>" + meters_config.types[i].shortprompt + "</th>";
+			the_text += "<th>Elapse Days</th>";
+			for (var i=0; i<meters_config.types.length; i++)
+			{
+				the_text += "<th>" + meters_config.types[i].shortprompt + " Used</th>";
+				last_values.push(0);
+			}
+			the_text += "</tr>";
 			for (var i=0; i<data.length; i++)
 			{
-				var gas = data[i].reading.gas;
-				var electricity = data[i].reading.electricity;
 				var epoch = data[i].epoch;
 				var the_date = new Date(data[i].epoch * 1000);
 				if (i % 2)
@@ -222,24 +249,36 @@ var meters = meters ||
 				else
 					the_text += "<tr class='tabodd'>";
 				the_text += "<td>" + the_date.toDateString() + "</td>";
-				the_text += "<td>" + gas.toFixed(2) + "</td>";
-				the_text += "<td>" + electricity.toFixed(2) + "</td>";
+				var values = [];
+				for (var j=0; j<meters_config.types.length; j++)
+				{
+					values.push(0);
+					if (meters_config.types[j].name in data[i].reading)
+						values[j] = data[i].reading[meters_config.types[j].name];
+					the_text += "<td>" + values[j].toFixed(2) + "</td>";
+				}
+				var dayfraction = 0;
 				if (last_epoch > 0)
 				{
-					var dayfraction = (epoch-last_epoch)/(60*60*24.0)
+					dayfraction = (epoch-last_epoch)/(60*60*24.0)
 					the_text += "<td>" + dayfraction.toFixed(0) + "</td>";
-					while (last_gas > gas)
-						gas += 10000;
-					while (last_electricity > electricity)
-						electricity += 100000;
-					the_text += "<td>" + ((gas - last_gas)/dayfraction).toFixed(2) + "</td>";
-					the_text += "<td>" + ((electricity - last_electricity)/dayfraction).toFixed(2) + "</td>";
 				}
 				else
-					the_text += "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
-				last_gas = gas;
-				last_electricity = electricity;
+					the_text += "<td>&nbsp;</td>";
+				for (var j=0; j<values.length; j++)
+				{
+					if (last_epoch > 0)
+					{
+						while (last_values[j] > values[j])
+							values[j] += meters_config.types[j].overflow;
+						the_text += "<td>" + ((values[j] - last_values[j])/dayfraction).toFixed(2) + "</td>";
+					}
+					else
+						the_text += "<td>&nbsp;</td>";
+				}
 				last_epoch = epoch;
+				for (var j=0; j<values.length; j++)
+					last_values[j] = values[j];
 				the_text += "</tr>\n";
 			}
 			the_text += "</table>\n";
@@ -260,37 +299,48 @@ var meters = meters ||
 			var graph_height = page_height - document.getElementById("non_graph").offsetHeight;
 			var the_columns = [];
 			var data = response.data;
-
 			var last_epoch = -1;
-			var last_gas = -1;
-			var last_electricity = -1;
+			var last_values = [];
 			var the_times = ['x'];
-			var the_gas = ['gas'];
-			var the_electricity = ['electricity'];
+			var y_values = []
+
+			for (var j=0; j<meters_config.types.length; j++)
+			{
+				last_values.push(0);
+				y_values.push([meters_config.types[j].prompt]);
+			}
+
 			for (var i=0; i<data.length; i++)
 			{
-				var gas = data[i].reading.gas;
-				var electricity = data[i].reading.electricity;
 				var epoch = data[i].epoch;
+				var values = [];
+				for (var j=0; j<meters_config.types.length; j++)
+				{
+					values.push(0);
+					if (meters_config.types[j].name in data[i].reading)
+						values[j] = data[i].reading[meters_config.types[j].name];
+				}
 				if (last_epoch > 0)
 				{
 					var dayfraction = (epoch-last_epoch)/(60*60*24.0)
 					var the_date = new Date(data[i].epoch * 1000);
 					the_times.push(("0" + the_date.getFullYear()).slice(-4) + "/" + ("0" + (1+the_date.getMonth())).slice(-2) + "/" + ("0" + the_date.getDate()).slice(-2));
-					while (last_gas > gas)
-						gas += 10000;
-					while (last_electricity > electricity)
-						electricity += 100000;
-					the_gas.push((gas - last_gas)/dayfraction);
-					the_electricity.push((electricity - last_electricity)/dayfraction);
+
+					for (var j=0; j<values.length; j++)
+					{
+						while (last_values[j] > values[j])
+							values[j] += meters_config.types[j].overflow;
+						y_values[j].push((values[j] - last_values[j])/dayfraction);
+					}
 				}
-				last_gas = gas;
-				last_electricity = electricity;
 				last_epoch = epoch;
+				for (var j=0; j<values.length; j++)
+					last_values[j] = values[j];
 			}
+
 			the_columns.push(the_times);
-			the_columns.push(the_gas);
-			the_columns.push(the_electricity);
+			for (j=0; j<y_values.length; j++)
+				the_columns.push(y_values[j]);
 
 			var the_graph = c3.generate
 			({

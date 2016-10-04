@@ -21,4 +21,6 @@
 var meters_config = meters_config ||
 {
 	paths : {"api":"/meters_api"},
+	types: [	{"name":"gas", "shortprompt":"Gas", "prompt":"Gas", "overflow":100000},
+				{"name":"electricity", "shortprompt":"Elec", "prompt":"Electricity", "overflow":100000} ],
 }
