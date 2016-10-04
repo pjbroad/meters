@@ -9,9 +9,6 @@ when configuring the application. While raw readings are recorded but
 the plotted graph shows the difference between the current and previous 
 readings, calculated as units-consumed-per-day.
 
-![Web Application screen shot](webapp.png)
-
-
 ## Setting up meters
 
 You can either configure the API to use a local flask server or 
@@ -35,7 +32,6 @@ shell variables to refer to your code locations.
 export CODEBASE=$HOME/code/meters
 export DEPSBASE=$HOME/code/meters_dependencies
 ```
-
 
 #### Configure the Database API
 
