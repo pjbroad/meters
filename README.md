@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Meters is a web application that uses Mongo DB to record, retrieve and
-graph, utility meter readings. Mongo access is provided through a
-python-flask API. I use gas and electricity readings but other
-utilities can be set when configuring the application. While raw
-readings are recorded, the plotted graph shows the difference between
+Meters is a web application that uses Mongo DB to record, retrieve and 
+graph, utility meter readings. Mongo access is provided through a 
+python-flask API. Example are gas and electricity readings but other 
+utilities can be set when configuring the application. While raw 
+readings are recorded, the plotted graph shows the difference between 
 the previous readings, calculated as units-consumed-per-day.
 
 ## Setting up meters
