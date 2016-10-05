@@ -29,6 +29,7 @@ var meters = meters ||
 	meter_info: null,
 	end_date: new Date(),
 	start_date: new Date(),
+	expected_meters: [],
 	last_epoch: null,
 
 	init_page: function()
@@ -65,6 +66,7 @@ var meters = meters ||
 			var newdiv = document.createElement('div');
 			newdiv.innerHTML = "<br>" + meters_config.types[i].prompt + "<br><input type=\"text\" name=\"" + meters_config.types[i].name + "\" value=\"\" required>";
 			input_h.appendChild(newdiv);
+			this.expected_meters.push(meters_config.types[i].name);
 		}
 
 		var doit;
@@ -159,7 +161,7 @@ var meters = meters ||
 						bits = inputs[i].value.split(":");
 						the_epoch = integer_date.yyyymmdd2date(the_date, parseInt(bits[0],10), parseInt(bits[1],10), 0).getTime() / 1000;
 					}
-					else
+					else if (this.expected_meters.indexOf(inputs[i].name) > -1)
 					{
 						values[inputs[i].name] = parseFloat(inputs[i].value);
 						if (isNaN(values[inputs[i].name]))
@@ -167,6 +169,11 @@ var meters = meters ||
 							error_message.display("Value error: " + inputs[i].name);
 							return;
 						}
+					}
+					else
+					{
+						error_message.display("Unexpected input: " + inputs[i].name);
+						return;
 					}
 				}
 				catch (err)
@@ -182,13 +189,11 @@ var meters = meters ||
 			return;
 		}
 
-		console.log(values);
-
 		var data = {"date":the_date, "epoch":the_epoch, "reading":values };
 		request_common.post_data(meters_config.paths["api"] + "/add", handler.bind(this), data);
 	},
 
-	get_url: function()
+	get_url_with_date: function()
 	{
 		var start = integer_date.date2yyyymmdd(this.start_date);
 		var end = integer_date.date2yyyymmdd(this.end_date);
@@ -303,7 +308,7 @@ var meters = meters ||
 			if (this.meter_info.name == "Raw")
 				document.getElementById(this.meter_info.panel_id).innerHTML = the_text;
 		}
-		var url = this.get_url();
+		var url = this.get_url_with_date();
 		this.controls_on(true);
 		request_common.get_data(url, display_graph.bind(this));
 	},
@@ -370,7 +375,7 @@ var meters = meters ||
 				legend: { hide:false } 
 			});
 		}
-		var url = this.get_url();
+		var url = this.get_url_with_date();
 		this.controls_on(true);
 		request_common.get_data(url, display_graph.bind(this));
 	},
