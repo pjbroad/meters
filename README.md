@@ -2,20 +2,20 @@
 
 ## Introduction
 
-Meters is a web application that uses MongoDB to record and retrieve 
-utility meter readings. Mongo access is provided through a python-flask 
-API. I use gas and electricity readings but other utilities can be set 
-when configuring the application. While raw readings are recorded but 
-the plotted graph shows the difference between the current and previous 
-readings, calculated as units-consumed-per-day.
+Meters is a web application that uses Mongo DB to record, retrieve and
+graph, utility meter readings. Mongo access is provided through a
+python-flask API. I use gas and electricity readings but other
+utilities can be set when configuring the application. While raw
+readings are recorded, the plotted graph shows the difference between
+the previous readings, calculated as units-consumed-per-day.
 
 ## Setting up meters
 
-You can either configure the API to use a local flask server or 
-configure to use WSGI with your web server. Only the Apache web server 
-has been tested.  The following packages are required, for example on a 
-Debian based system. Up to date packages from mongodb.com are 
-recommended for the database over those that come with most Linux 
+You can either configure the API to use a local flask server or
+configure to use WSGI with your web server. Only the Apache web server
+has been tested.  The following packages are required, for example on a
+Debian based system. Up to date packages from mongodb.com are
+recommended for the database over those that come with most Linux
 distributions.
 
 ```
@@ -53,8 +53,8 @@ api/common.py
 
 #### Configure the web server
 
-Create a WSGI configuration file appropriate for you code path.  This 
-can be generated from a provided template. Also enable wsgi. For 
+Create a WSGI configuration file appropriate for your code path.  This
+can be generated from a provided template. Also enable wsgi. For
 example:
 
 ```
@@ -65,9 +65,9 @@ vi meters_api.wsgi
 sudo a2enmod wsgi
 ```
 
-Assuming an Apache web server, generate a config file from the apache 
-template config/template_meters-apache.conf then modify this point at 
-your html and api directories.  Copy the modified file to 
+Assuming an Apache web server, generate a config file from the apache
+template config/template_meters_apache.conf then modify this point at
+your html and api directories.  Copy the modified file to
 /etc/apache2/conf-available/ and enable the configuration. For example:
 
 ```
@@ -81,7 +81,7 @@ rm meters_apache.conf
 sudo a2enconf meters_apache
 ```
 
-Finally, restart your Apache server
+Finally, restart your Apache web service.
 
 ```
 sudo service apache2 reload
@@ -89,7 +89,7 @@ sudo service apache2 reload
 
 #### Configure web application options
 
-Modify server/config/template_meters_config.js to refer to your api 
+Modify server/config/template_meters_config.js to refer to your API 
 directory then copy to html/meters_config.js. Also set the type of 
 utility meters you wish to use.  For example:
 
@@ -136,7 +136,7 @@ EOT
 curl http://localhost/meters_api/last
 ```
 
-The output should be similar to this. If the status is false then check 
+The output should be similar to that below. If the status is false then check 
 your set-up.
 
 ```
@@ -155,10 +155,10 @@ your set-up.
 
 #### Create Database Indexes
 
-Without too much performance tuning, creating some basic indexes for 
-the database does provide an improvement.  Be sure to use the name of 
-the database you have actually configured.  For example using the mongo 
-shell:
+Without too much performance tuning, creating some basic indexes for
+the database does provide a speed improvement.  Be sure to use the name
+of the database you have actually configured.  For example using the
+mongo shell:
 
 ```
 mongo
