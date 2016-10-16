@@ -54,21 +54,19 @@ api/common.py
 #### Configure the web server
 
 Create a WSGI configuration file appropriate for your code path.  This
-can be generated from a provided template. Also enable wsgi. For
-example:
+can be generated from the provided template. For example:
 
 ```
 cd $CODEBASE/api
 cp ../config/template_meters_api.wsgi meters_api.wsgi
 sed -i "s|###path-to-api###|$CODEBASE/api|g" meters_api.wsgi
 vi meters_api.wsgi
-sudo a2enmod wsgi
 ```
 
 Assuming an Apache web server, generate a config file from the apache
 template config/template_meters_apache.conf then modify this point at
 your html and api directories.  Copy the modified file to
-/etc/apache2/conf-available/ and enable the configuration. For example:
+/etc/apache2/conf-available/. For example:
 
 ```
 cd $CODEBASE/config
@@ -78,20 +76,23 @@ sed -i "s|###path-to-api###|$CODEBASE/api|g" meters_apache.conf
 vi meters_apache.conf
 sudo cp meters_apache.conf /etc/apache2/conf-available/
 rm meters_apache.conf
+```
+
+Finally, enable wsgi, enable the apache configuration then reload your 
+Apache web service.
+
+```
+sudo a2enmod wsgi
 sudo a2enconf meters_apache
-```
-
-Finally, restart your Apache web service.
-
-```
 sudo service apache2 reload
 ```
 
 #### Configure web application options
 
-Modify server/config/template_meters_config.js to refer to your API 
-directory then copy to html/meters_config.js. Also set the type of 
-utility meters you wish to use.  For example:
+Create web application configuraiton file html/meters_config.js.  This 
+defines the path to the web API and also the types of utility meters 
+you will use.  For example, copy then modify the provided template 
+config/template_meters_config.js:
 
 ```
 cd $CODEBASE/config
@@ -103,7 +104,7 @@ mv meters_config.js ../html
 #### Get JavaScript libraries
 
 Download the JavaScript libraries for c3, d3, jquery and jquery-ui, 
-unpack them and add the required files to the html/lib directory. For 
+unpack them and copy the required files to the html/lib directory. For 
 example:
 
 ```
@@ -126,7 +127,7 @@ cp -R $DEPSBASE/js_libraries/jquery-ui-1.12.0/images .
 #### Testing the database set-up
 
 These commands will write a record to the database and read it back 
-using curl (you may need to install curl. Be sure to specify your own 
+using curl (you may need to install curl). Be sure to specify your own 
 server certificate if needed (--cacert <file>) and URL. For example:
 
 ```
