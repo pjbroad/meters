@@ -1,4 +1,5 @@
 html/lib
 html/meters_config.js
+api/meters_api.wsgi
 *.pyc
 config/mongodb_config.json
