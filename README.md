@@ -19,7 +19,7 @@ recommended for the database over those that come with most Linux
 distributions.
 
 ```
-sudo apt-get install apache2 python-pymongo mongodb python-flask libapache2-mod-wsgi
+sudo apt-get install apache2 python3-pymongo mongodb python3-flask libapache2-mod-wsgi
 ```
 
 #### Examples
