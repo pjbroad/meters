@@ -109,19 +109,18 @@ example:
 
 ```
 mkdir -p $DEPSBASE/js_libraries && cd $DEPSBASE/js_libraries
-wget -qO- https://github.com/c3js/c3/archive/0.4.11.tar.gz | tar xzv
-wget -q https://github.com/d3/d3/releases/download/v3.5.17/d3.zip && unzip -d d3-v3.5.17 d3.zip && rm d3.zip
-mkdir -p jquery-3.1.0 && cd jquery-3.1.0 && wget -qO jquery.min.js https://code.jquery.com/jquery-3.1.0.min.js && cd ..
-wget https://jqueryui.com/resources/download/jquery-ui-1.12.0.zip && unzip jquery-ui-1.12.0.zip && rm jquery-ui-1.12.0.zip
-
+wget -qO- https://github.com/c3js/c3/archive/refs/tags/v0.7.20.tar.gz | tar xzv
+wget -q https://github.com/d3/d3/releases/download/v5.16.0/d3.zip && unzip -d d3-5.16.0 d3.zip && rm d3.zip
+mkdir -p jquery-3.6.0 && cd jquery-3.6.0 && wget -qO jquery.min.js https://code.jquery.com/jquery-3.6.0.min.js && cd ..
+wget https://jqueryui.com/resources/download/jquery-ui-1.13.1.zip && unzip jquery-ui-1.13.1.zip && rm jquery-ui-1.13.1.zip
 cd $CODEBASE/html && mkdir -p lib && cd lib
-cp $DEPSBASE/js_libraries/c3-0.4.11/c3.min.css .
-cp $DEPSBASE/js_libraries/c3-0.4.11/c3.min.js .
-cp $DEPSBASE/js_libraries/d3-v3.5.17/d3.min.js .
-cp $DEPSBASE/js_libraries/jquery-3.1.0/jquery.min.js .
-cp $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.css .
-cp $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.js .
-cp -R $DEPSBASE/js_libraries/jquery-ui-1.12.0/images .
+cp $DEPSBASE/js_libraries/c3-0.7.20/c3.min.css .
+cp $DEPSBASE/js_libraries/c3-0.7.20/c3.min.js .
+cp $DEPSBASE/js_libraries/d3-5.16.0/d3.min.js .
+cp $DEPSBASE/js_libraries/jquery-3.6.0/jquery.min.js .
+cp $DEPSBASE/js_libraries/jquery-ui-1.13.1/jquery-ui.min.css .
+cp $DEPSBASE/js_libraries/jquery-ui-1.13.1/jquery-ui.min.js .
+cp -R $DEPSBASE/js_libraries/jquery-ui-1.13.1/images .
 ```
 
 #### Testing the database set-up
